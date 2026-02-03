@@ -5,7 +5,7 @@
 **Project:** Fork and modernize the abandoned SyncSettings Sublime Text package  
 **License:** MIT (original) — fork permitted  
 **Original Repo:** `github.com/mfuentesg/SyncSettings` (archived Oct 2024)  
-**Status:** 9 open issues, core functionality broken for many users  
+**Status:** Phase 3: Compatibility & Modernization in progress
 
 **Goal:** Create a working, maintained fork compatible with Sublime Text 3 & 4, with improved security and reliability.
 
@@ -18,17 +18,18 @@
 
 ### Tasks
 
-| Task | Description | Status |
-|------|-------------|--------|
-| 1.1 | Fork repository to personal/org GitHub account | ☐ |
-| 1.2 | Rename package (required for Package Control submission) | ☐ |
-| 1.3 | Update README with fork notice and new maintainer info | ☐ |
-| 1.4 | Review and close resolved issues from original repo | ☐ |
-| 1.5 | Set up local ST3 and ST4 test environments | ☐ |
+| Task | Description                                              | Status |
+| ---- | -------------------------------------------------------- | ------ |
+| 1.1  | Fork repository to personal/org GitHub account           | [x]    |
+| 1.2  | Rename package (required for Package Control submission) | [x]    |
+| 1.3  | Update README with fork notice and new maintainer info   | [x]    |
+| 1.4  | Review and close resolved issues from original repo      | ☐      |
+| 1.5  | Set up local ST3 and ST4 test environments               | ☐      |
 
 ### Naming Considerations
 
 Suggested names (check Package Control for conflicts):
+
 - `Sync Settings 2`
 - `Settings Sync`
 - `GistSync`
@@ -48,6 +49,7 @@ Suggested names (check Package Control for conflicts):
 **File:** `sync_settings/libs/gist.py`
 
 **Fix:**
+
 ```python
 # Option A: Use certifi (preferred)
 import certifi
@@ -58,7 +60,8 @@ response = requests.get(url, headers=headers, verify=True)
 ```
 
 **Validation:**
-- [ ] Test on Windows 10/11
+
+- [x] Test on Windows 10/11
 - [ ] Test on macOS 12+
 - [ ] Test on Ubuntu 22.04+
 - [ ] Test behind corporate proxy
@@ -72,6 +75,7 @@ response = requests.get(url, headers=headers, verify=True)
 **File:** `sync_settings/commands/download.py`, `sync_settings/libs/gist.py`
 
 **Fix:**
+
 ```python
 # Ensure auth header is ALWAYS included when token exists
 def _build_headers(self):
@@ -86,8 +90,9 @@ def _build_headers(self):
 ```
 
 **Validation:**
+
 - [ ] Download without token (public gist) — should work
-- [ ] Download with token — should work with higher rate limit
+- [x] Download with token — should work with higher rate limit
 - [ ] Verify rate limit header in response
 
 ---
@@ -99,6 +104,7 @@ def _build_headers(self):
 **Files:** File enumeration logic in upload command
 
 **Fix:**
+
 ```python
 import sublime
 
@@ -111,6 +117,7 @@ def get_user_package_path():
 ```
 
 **Validation:**
+
 - [ ] Test on ST3 (Build 3211)
 - [ ] Test on ST4 (Build 4169+)
 - [ ] Test with non-ASCII characters in path (Windows usernames)
@@ -124,6 +131,7 @@ def get_user_package_path():
 **File:** `sync_settings/libs/gist.py`
 
 **Fix:**
+
 ```python
 import json
 
@@ -139,9 +147,10 @@ def _prepare_payload(self, files_dict):
 ```
 
 **Validation:**
-- [ ] Upload file containing emoji
-- [ ] Upload file with CJK characters
-- [ ] Upload file with extended Latin characters
+
+- [x] Upload file containing emoji
+- [x] Upload file with CJK characters
+- [x] Upload file with extended Latin characters
 
 ---
 
@@ -152,6 +161,7 @@ def _prepare_payload(self, files_dict):
 **Files:** Multiple command files
 
 **Fix:**
+
 ```python
 # BEFORE
 try:
@@ -169,7 +179,8 @@ except Exception as e:
 ```
 
 **Validation:**
-- [ ] Trigger known error condition
+
+- [x] Trigger known error condition
 - [ ] Verify error appears in ST console
 - [ ] Verify error logged to plugin log file
 
@@ -186,8 +197,9 @@ except Exception as e:
 **Reference:** Original issue #169
 
 **Tasks:**
-- [ ] Remove Python 2 compatibility shims
-- [ ] Remove `from __future__` imports
+
+- [x] Remove Python 2 compatibility shims
+- [x] Remove `from __future__` imports
 - [ ] Update `python-versions` in metadata
 - [ ] Use f-strings throughout
 - [ ] Add type hints to public APIs
@@ -196,16 +208,17 @@ except Exception as e:
 
 ### 3.2 Dependency Audit
 
-| Dependency | Current | Action |
-|------------|---------|--------|
-| `requests` | Bundled (old) | Update or replace with `urllib.request` |
-| `certifi` | Bundled (old) | Update to latest |
-| Package Control deps | None declared | Evaluate if needed |
+| Dependency           | Current       | Action                                  | Status |
+| -------------------- | ------------- | --------------------------------------- | ------ |
+| `requests`           | Bundled (old) | Update or replace with `urllib.request` | [x]    |
+| `certifi`            | Bundled (old) | Update to latest                        | [x]    |
+| Package Control deps | None declared | Evaluate if needed                      | [x]    |
 
 **Decision:** Replace bundled `requests` with stdlib `urllib.request` to:
-- Eliminate dependency management
-- Use system SSL certificates automatically
-- Reduce package size
+
+- [x] Eliminate dependency management
+- [x] Use system SSL certificates automatically
+- [x] Reduce package size
 
 ---
 
@@ -238,6 +251,7 @@ def _build_auth_header(self, token):
 **Risk:** Exposed if user syncs `User/` folder publicly or commits to git
 
 **Mitigations:**
+
 - [ ] Add `SyncSettings.sublime-settings` to default `.gitignore` list
 - [ ] Add warning in README about token security
 - [ ] Consider OS keychain integration (future enhancement)
@@ -247,6 +261,7 @@ def _build_auth_header(self, token):
 ### 4.2 Input Validation
 
 **Tasks:**
+
 - [ ] Validate `gist_id` format before API calls
 - [ ] Sanitize file paths to prevent directory traversal
 - [ ] Validate API responses before processing
@@ -278,27 +293,27 @@ def validate_gist_id(gist_id):
 
 ### 5.1 Test Matrix
 
-| Platform | ST Version | Python | Status |
-|----------|------------|--------|--------|
-| Windows 11 | ST4 (4169) | 3.8 | ☐ |
-| Windows 10 | ST3 (3211) | 3.3 | ☐ |
-| macOS 14 | ST4 (4169) | 3.8 | ☐ |
-| macOS 12 | ST3 (3211) | 3.3 | ☐ |
-| Ubuntu 22.04 | ST4 (4169) | 3.8 | ☐ |
-| Ubuntu 20.04 | ST3 (3211) | 3.3 | ☐ |
+| Platform     | ST Version | Python | Status |
+| ------------ | ---------- | ------ | ------ |
+| Windows 11   | ST4 (4169) | 3.8    | [x]    |
+| Windows 10   | ST3 (3211) | 3.3    | ☐      |
+| macOS 14     | ST4 (4169) | 3.8    | ☐      |
+| macOS 12     | ST3 (3211) | 3.3    | ☐      |
+| Ubuntu 22.04 | ST4 (4169) | 3.8    | ☐      |
+| Ubuntu 20.04 | ST3 (3211) | 3.3    | ☐      |
 
 ### 5.2 Test Cases
 
-| ID | Test Case | Expected Result |
-|----|-----------|-----------------|
-| T01 | Fresh install, create new gist | Gist created, ID saved |
-| T02 | Upload settings | All files uploaded |
-| T03 | Download settings | All files restored |
-| T04 | Upload with invalid token | Clear error message |
-| T05 | Download with rate limiting | Retry or clear error |
-| T06 | Sync files with unicode names | Success |
-| T07 | Auto-upgrade on startup | Settings pulled silently |
-| T08 | Exclude files via pattern | Matched files skipped |
+| ID  | Test Case                      | Expected Result          |
+| --- | ------------------------------ | ------------------------ |
+| T01 | Fresh install, create new gist | Gist created, ID saved   |
+| T02 | Upload settings                | All files uploaded       |
+| T03 | Download settings              | All files restored       |
+| T04 | Upload with invalid token      | Clear error message      |
+| T05 | Download with rate limiting    | Retry or clear error     |
+| T06 | Sync files with unicode names  | Success                  |
+| T07 | Auto-upgrade on startup        | Settings pulled silently |
+| T08 | Exclude files via pattern      | Matched files skipped    |
 
 ### 5.3 CI/CD Setup
 
@@ -324,6 +339,7 @@ def validate_gist_id(gist_id):
 ### 6.2 Package Control Submission
 
 **Requirements:**
+
 - [ ] Unique package name
 - [ ] Valid `repository.json` or GitHub releases
 - [ ] Passing Package Control validation
@@ -340,14 +356,14 @@ def validate_gist_id(gist_id):
 
 ## Timeline Summary
 
-| Phase | Duration | Dependencies |
-|-------|----------|--------------|
-| Phase 1: Setup | 1 day | None |
-| Phase 2: Critical Fixes | 2-3 days | Phase 1 |
-| Phase 3: Modernization | 2-3 days | Phase 2 |
-| Phase 4: Security | 1-2 days | Phase 2 |
-| Phase 5: Testing | 2 days | Phase 3, 4 |
-| Phase 6: Release | 1-2 days | Phase 5 |
+| Phase                   | Duration | Dependencies |
+| ----------------------- | -------- | ------------ |
+| Phase 1: Setup          | 1 day    | None         |
+| Phase 2: Critical Fixes | 2-3 days | Phase 1      |
+| Phase 3: Modernization  | 2-3 days | Phase 2      |
+| Phase 4: Security       | 1-2 days | Phase 2      |
+| Phase 5: Testing        | 2 days   | Phase 3, 4   |
+| Phase 6: Release        | 1-2 days | Phase 5      |
 
 **Total Estimated Effort:** 9-13 days
 
@@ -355,26 +371,26 @@ def validate_gist_id(gist_id):
 
 ## Risk Register
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|------------|------------|
-| GitHub API changes | High | Low | Pin API version, monitor deprecations |
-| Package Control rejection | Medium | Low | Follow submission guidelines exactly |
-| SSL issues on corporate networks | Medium | Medium | Document proxy configuration |
-| Token exposure in sync | High | Medium | Clear documentation, `.gitignore` |
-| Maintainer burnout | High | Medium | Accept community contributions |
+| Risk                             | Impact | Likelihood | Mitigation                            |
+| -------------------------------- | ------ | ---------- | ------------------------------------- |
+| GitHub API changes               | High   | Low        | Pin API version, monitor deprecations |
+| Package Control rejection        | Medium | Low        | Follow submission guidelines exactly  |
+| SSL issues on corporate networks | Medium | Medium     | Document proxy configuration          |
+| Token exposure in sync           | High   | Medium     | Clear documentation, `.gitignore`     |
+| Maintainer burnout               | High   | Medium     | Accept community contributions        |
 
 ---
 
 ## Future Enhancements (Backlog)
 
-| Feature | Priority | Effort |
-|---------|----------|--------|
-| OS keychain token storage | P3 | High |
-| GitLab/Bitbucket support | P3 | Medium |
-| Selective sync (per-machine settings) | P2 | Medium |
-| Conflict resolution UI | P3 | High |
-| Automatic backup rotation | P3 | Low |
-| WebDAV/S3 backend option | P4 | High |
+| Feature                               | Priority | Effort |
+| ------------------------------------- | -------- | ------ |
+| OS keychain token storage             | P3       | High   |
+| GitLab/Bitbucket support              | P3       | Medium |
+| Selective sync (per-machine settings) | P2       | Medium |
+| Conflict resolution UI                | P3       | High   |
+| Automatic backup rotation             | P3       | Low    |
+| WebDAV/S3 backend option              | P4       | High   |
 
 ---
 
