@@ -1,5 +1,5 @@
 {
-    // Brings write permission to Sync Settings over your gists (edit, delete and create).
+    // Brings write permission to Sync Settings 2 over your gists (edit, delete and create).
     // This option is not required, if you only want to download your backups
     "access_token": "",
 
@@ -21,10 +21,10 @@
         "*Package Control.merged-ca-bundle",
         "*Package Control.system-ca-bundle",
         "*Package Control.user-ca-bundle",
-        "*Thumbs.db"
+        "*Thumbs.db",
     ],
 
-	// An HTTP proxy server to use for requests.
+    // An HTTP proxy server to use for requests.
     "http_proxy": "",
 
     // An HTTPS proxy server to use for requests.
@@ -37,5 +37,5 @@
 
     // If is `true`, your settings will be synced with the latest settings on
     // gist.github.com when Sublime Text startup
-    "auto_upgrade": false
+    "auto_upgrade": false,
 }

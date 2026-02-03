@@ -1,8 +1,8 @@
 import unittest
 
 import os
-import mock
 import shutil
+from unittest import mock
 from sync_settings.libs import path
 
 
@@ -40,6 +40,7 @@ class TestPath(unittest.TestCase):
         for test in tests:
             self.assertEqual(test['expected'], path.encode(test['text']))
 
+    @mock.patch('platform.system', mock.MagicMock(return_value='Linux'))
     def test_decode(self):
         tests = [
             {'expected': 'text', 'text': 'text'},
@@ -55,6 +56,7 @@ class TestPath(unittest.TestCase):
     def test_separator_windows(self):
         self.assertEqual(path.separator(), '\\')
 
+    @mock.patch('platform.system', mock.MagicMock(return_value='Linux'))
     def test_separator_unix(self):
         self.assertEqual(path.separator(), '/')
 
@@ -64,6 +66,7 @@ class TestPath(unittest.TestCase):
             return 'C:/my/windows/path/file.txt'
         self.assertEqual('C:\\my\\windows\\path\\file.txt', path.os_path(my_func)())
 
+    @mock.patch('platform.system', mock.MagicMock(return_value='Linux'))
     def test_os_path_unix(self):
         def my_func():
             return 'C:/my/windows/path/file.txt'

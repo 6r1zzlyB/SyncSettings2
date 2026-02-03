@@ -1,5 +1,5 @@
 import unittest
-import mock
+from unittest import mock
 from sync_settings.libs import settings
 
 

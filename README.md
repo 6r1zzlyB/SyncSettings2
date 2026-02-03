@@ -1,60 +1,39 @@
-# UNMAINTAINED
+# Sync Settings 2
 
-Sadly, I won't able to continue with the development of SyncSettings, it will be available on package control registry but won't receive new changes.
+> The cross-platform solution to keep your Sublime Text packages and settings in sync.
 
-SyncSettings has been a very challenging project and it tought me how to cope with a community and learn more about the open source world.
-Thanks for all the support during this time and I hope that SyncSttings remains being so useful like it was for me.
+![Sync Settings](https://raw.githubusercontent.com/mfuentesg/SyncSettings/master/messages/sync-settings-logo.png)
 
-Happy Coding!
+## Installation
 
-Marcelo
+### Manual installation
 
----
+1. Clone or download this repository.
+2. Move the folder to your Sublime Text `Packages` directory.
+3. Rename the folder to `SyncSettings` (or `SyncSettings 2` if you prefer, but `SyncSettings` is recommended for compatibility).
 
-# Sync Settings
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+## Requirements
 
-[![SyncSettings](https://img.shields.io/packagecontrol/dt/Sync%20Settings.svg?maxAge=2592000)](https://packagecontrol.io/packages/Sync%20Settings)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)
-[![SyncSettings release](https://img.shields.io/github/release/mfuentesg/SyncSettings.svg)](https://img.shields.io/github/release/mfuentesg/SyncSettings.svg?maxAge=2592000)
-[![Build Status](https://travis-ci.org/mfuentesg/SyncSettings.svg?branch=master)](https://travis-ci.org/mfuentesg/SyncSettings)
-[![Coverage](https://img.shields.io/codecov/c/github/mfuentesg/SyncSettings.svg?style=flat)](https://codecov.io/gh/mfuentesg/SyncSettings)
-
-<a href="https://www.buymeacoffee.com/mfuentesg" target="_blank">
-   <img height="41" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" />
-</a>
-
-<br />
-<br />
-
-With [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings), you are able to synchronize your [Sublime Text](http://sublimetext.com/) settings among multiple devices, and keep them updated.
-
-Being powered by GitHub-Gists, [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings) provides you a reliable cross-platform solution to keep your backups secure.
-
-Please, follow the steps below to getting started with [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings).
-
-> [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings) works on Windows, Linux, macOS and [Sublime Text 3](http://sublimetext.com/3).
-
+*   Sublime Text 4
+*   Python 3.8 (Built-in to ST4)
 
 ## Getting Started
 
-1. Run `Package Control: Install Package` command, and looks for [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings)
-2. Run `Sync Settings: Edit User Settings`
-3. **if** *Do you already have a gist?*
-    1. Copy `gist id` and put it in config file (`https://gist.github.com/<username>/<gist id>`) (`gist_id` property)
-    2. Run `Sync Settings: Download` command to retrieve your backup.
-4. **else**
+1. Open the Command Palette <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>p</kbd> (OS X) or <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>p</kbd> (Linux/Windows)
+2. Type `Sync Settings 2` to see available commands.
+3. **If you already have a gist:**
+    1. Copy `gist id` and put it in config file (`https://gist.github.com/<username>/<gist id>`) (`gist_id` property).
+    2. Run `Sync Settings 2: Download` command to retrieve your backup.
+4. **Else:**
     1. Create an access token [here](https://github.com/settings/tokens/new) with `gist` scope checked.
     2. Put the token in the config file (`access_token` property)
-    3. Run `Sync Settings: Create and Upload` command
-    
+    3. Run `Sync Settings 2: Create and Upload` command
+
 ### File Format
 
 Please note - the config file uses the JSON format. A simplified example may look like the following.
 
-```
+```json
 {
 	"access_token": "xxxxxxxxxxxxxxxxxxxxxxxxx",
 	"gist_id": "xxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -63,11 +42,11 @@ Please note - the config file uses the JSON format. A simplified example may loo
 
 ## Options
 
-By default, this plugin operates over [Sublime Text](https://www.sublimetext.com) packages folder (i.e `/Users/<my_user>/Library/Application Support/Sublime Text 3/Packages/User`), which means, `excluded_files` and `included_files` will look for files inside that folder.
+By default, this plugin operates over [Sublime Text](https://www.sublimetext.com) packages folder (i.e `/Users/<my_user>/Library/Application Support/Sublime Text/Packages/User`), which means, `excluded_files` and `included_files` will look for files inside that folder.
 
 | name | type | description |
 |---|---|---|
-| `access_token`  | `string` | Brings write permission to [Sync Settings](https://packagecontrol.io/packages/Sync%20Settings) over your gists (edit, delete and create). *(This option is not required, if you only want to download your backups)* | 
+| `access_token`  | `string` | Brings write permission to Sync Settings 2 over your gists (edit, delete and create). *(This option is not required, if you only want to download your backups)* | 
 | `gist_id`  | `string` | Identifier of your backup on [gist.github.com](https://gist.github.com). |
 | `auto_upgrade`  | `boolean` | If is `true`, your settings will be synced with the latest settings on [gist.github.com](https://gist.github.com) when [Sublime Text](https://www.sublimetext.com) startup |
 | `http_proxy`  | `string` | An HTTP proxy server to use for requests. |
@@ -82,17 +61,18 @@ By default, this plugin operates over [Sublime Text](https://www.sublimetext.com
 
 | command | description |
 |---|---|
-|**Sync Settings: Create and Upload**|Creates a new backup on `gist.github.com` from your local files|
-|**Sync Settings: Delete and Create**|Deletes the remote reference of your gist and then, creates a new backup from your local files to `gist.github.com`|
-|**Sync Settings: Upload**|Upload a backup from your local files to `gist.github.com`|
-|**Sync Settings: Download**|Retrieves the latest version of your backup, using as reference the `gist_id` property defined in your settings file.|
-|**Sync Settings: Delete**|Deletes the remote version of your gist, using as reference the `gist_id` property defined in your settings file. (This action is irreversible)|
-|**Sync Settings: Show Logs**|Open a new view, with `Sync Settings` log file|
-|**Sync Settings: Edit User Settings**|Open a new view, with `Sync Settings` user settings.|
+|**Sync Settings 2: Create and Upload**|Creates a new backup on `gist.github.com` from your local files|
+|**Sync Settings 2: Delete and Create**|Deletes the remote reference of your gist and then, creates a new backup from your local files to `gist.github.com`|
+|**Sync Settings 2: Upload**|Upload a backup from your local files to `gist.github.com`|
+|**Sync Settings 2: Download**|Retrieves the latest version of your backup, using as reference the `gist_id` property defined in your settings file.|
+|**Sync Settings 2: Delete**|Deletes the remote version of your gist, using as reference the `gist_id` property defined in your settings file. (This action is irreversible)|
+|**Sync Settings 2: Show Logs**|Open a new view, with `Sync Settings 2` log file|
+|**Sync Settings 2: Edit User Settings**|Open a new view, with `Sync Settings 2` user settings.|
 
 ## Contributors
 
 Thank you for contribute to this project:
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -114,27 +94,12 @@ Thank you for contribute to this project:
 
 ## Issues
 
-If you are experimenting an error, or an unusual behavior. Please let me know,  creating a [new issue](https://github.com/mfuentesg/SyncSettings/issues/new) appending the logs provided by the  `Sync Settings: Show logs` command.
+If you are experimenting an error, or an unusual behavior. Please let me know, creating a [new issue](https://github.com/mfuentesg/SyncSettings/issues/new) appending the logs provided by the `Sync Settings 2: Show logs` command.
 
 ## Development
 
-You are welcome to contribute to this project, whenever you want.
-
-**Install dependencies**
-
-This project uses pipenv as environment and package manager, follow the instructions below and start contributing.
-
-```
-$ pipenv --python 3.7
-$ pipenv install
-```
-
-**Run tests**
-
-```
-$ pipenv run nosetests tests
-```
-
+You are welcome to contribute to this project. 
+Clone the repo and install it in your Sublime Text `Packages` directory.
 
 ## License
 

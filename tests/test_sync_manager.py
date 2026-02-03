@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import mock
+from unittest import mock
 import os
 from sync_settings import sync_manager as manager
 

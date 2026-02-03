@@ -58,7 +58,7 @@ class SyncSettingsDownloadCommand(sublime_plugin.WindowCommand):
             setting = 'installed_packages'
             if setting not in package_settings:
                 package_settings[setting] = []
-            package_settings[setting].append('Sync Settings')
+            package_settings[setting].append('Sync Settings 2')
             diff = set(package_settings.get(setting)).difference(set(local_settings.get(setting)))
             if len(diff) > 0:
                 self.window.run_command('advanced_install_package', {'packages': list(diff)})

@@ -2,7 +2,8 @@
 
 import json
 import re
-import requests
+import urllib.request
+import urllib.error
 from functools import wraps
 
 from .logger import logger
@@ -28,11 +29,23 @@ class UnprocessableDataError(RuntimeError):
     pass
 
 
+class Response:
+    def __init__(self, status_code, data=None, reason=None):
+        self.status_code = status_code
+        self.reason = reason
+        self._data = data
+
+    def json(self):
+        if self._data is None:
+            return {}
+        return json.loads(self._data.decode('utf-8'))
+
+
 def auth(func):
     @wraps(func)
     def auth_wrapper(self, *args, **kwargs):
         if self.token is None:
-            raise AuthenticationError('GitHub`s credentials are required')
+            raise AuthenticationError('GitHub credentials are required')
         return func(self, *args, **kwargs)
 
     return auth_wrapper
@@ -62,56 +75,93 @@ class Gist:
     @auth
     def create(self, data):
         if not isinstance(data, dict) or not len(data):
-            raise ValueError('Gist can`t be created without data')
-        return self.__do_request('post', self.make_uri(), data=json.dumps(data)).json()
+            raise ValueError("Gist can't be created without data")
+        return self.__do_request('POST', self.make_uri(), data=data).json()
 
     @auth
     @with_gid
     def update(self, gid, data):
         if not isinstance(data, dict) or not len(data):
-            raise ValueError('Gist can`t be updated without data')
-        return self.__do_request('patch', self.make_uri(gid), data=json.dumps(data)).json()
+            raise ValueError("Gist can't be updated without data")
+        return self.__do_request('PATCH', self.make_uri(gid), data=data).json()
 
     @auth
     @with_gid
     def delete(self, gid):
-        response = self.__do_request('delete', self.make_uri(gid))
+        response = self.__do_request('DELETE', self.make_uri(gid))
         return response.status_code == 204
 
     @with_gid
     def get(self, gid):
-        return self.__do_request('get', self.make_uri(gid)).json()
+        return self.__do_request('GET', self.make_uri(gid)).json()
 
     @with_gid
     def commits(self, gid):
-        return self.__do_request('get', self.make_uri('{}/commits'.format(gid))).json()
+        return self.__do_request('GET', self.make_uri('{}/commits'.format(gid))).json()
 
     def __do_request(self, verb, url, **kwargs):
-        # @TODO add support for proxies
-        try:
-            response = getattr(requests, verb)(url, headers=self.headers, proxies=self.proxies, **kwargs)
-        except requests.exceptions.ConnectionError as e:
-            raise NetworkError('Can`t perform this action due to network errors. reason: {}'.format(str(e)))
-        if response.status_code >= 300:
-            logger.warning(response.json())
-        if response.status_code == 404:
-            raise NotFoundError('The requested gist do not exists, or the token has not enough permissions')
-        if response.status_code in [401, 403]:
-            raise AuthenticationError('The credentials are invalid, or the token does not have permissions')
-        if response.status_code == 422:
-            raise UnprocessableDataError('The provided data has errors')
-        if response.status_code >= 300:
-            raise UnexpectedError('Unexpected Error, Reason: {}'.format(response.json()['message']))
+        headers = self.headers
+        data = kwargs.get('data')
+        
+        # Phase 2.4 Fix: Unicode encoding
+        if data is not None:
+            if isinstance(data, (dict, list)):
+                json_data = json.dumps(data, ensure_ascii=False)
+                data_bytes = json_data.encode('utf-8')
+            else:
+                data_bytes = data.encode('utf-8')
+        else:
+            data_bytes = None
 
-        return response
+        req = urllib.request.Request(url, data=data_bytes, headers=headers, method=verb.upper())
+
+        # Proxy handling
+        proxies = self.proxies
+        if proxies:
+            proxy_handler = urllib.request.ProxyHandler(proxies)
+            opener = urllib.request.build_opener(proxy_handler)
+            urllib.request.install_opener(opener)
+
+        try:
+            with urllib.request.urlopen(req) as f:
+                return Response(f.getcode(), f.read(), f.reason)
+        except urllib.error.HTTPError as e:
+            # Create a response object from the error
+            try:
+                error_body = e.read()
+            except Exception:
+                error_body = None
+            response = Response(e.code, error_body, e.reason)
+            
+            # Map status codes to exceptions based on legacy logic
+            if response.status_code == 404:
+                raise NotFoundError('The requested gist does not exist, or the token requires permissions')
+            if response.status_code in [401, 403]:
+                raise AuthenticationError('Credentials invalid or token missing permissions')
+            if response.status_code == 422:
+                raise UnprocessableDataError('The provided data has errors')
+            if response.status_code >= 300:
+                logger.warning(response.json())
+                try:
+                    msg = response.json().get('message', str(e))
+                except Exception:
+                    msg = str(e)
+                raise UnexpectedError('Unexpected Error, Reason: {}'.format(msg))
+            return response
+        except urllib.error.URLError as e:
+            raise NetworkError('Network error. Reason: {}'.format(str(e.reason)))
+        except Exception as e:
+            raise UnexpectedError('Unknown error: {}'.format(str(e)))
 
     @property
     def headers(self):
-        return {} if not self.token else {
-            'accept': 'application/vnd.github.v3+json',
-            'content-type': 'application/json',
-            'authorization': 'token {}'.format(self.token)
+        h = {
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
         }
+        if self.token:
+            h['Authorization'] = 'token {}'.format(self.token)
+        return h
 
     @property
     def proxies(self):

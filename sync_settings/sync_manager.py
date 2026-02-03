@@ -2,11 +2,12 @@
 
 from fnmatch import fnmatch
 import os
-import requests
 import shutil
 import sublime
 import threading
 import time
+import urllib.request
+import urllib.error
 
 from .libs import path, settings
 from .libs.logger import logger
@@ -72,13 +73,11 @@ def download_file(q):
     while not q.empty():
         url, name = q.get()
         try:
-            r = requests.get(url, stream=True)
-            if r.status_code == 200:
+            with urllib.request.urlopen(url) as r:
                 with open(name, 'wb') as f:
-                    r.raw.decode_content = True
-                    shutil.copyfileobj(r.raw, f)
-        except:  # noqa: E722
-            pass
+                    shutil.copyfileobj(r, f)
+        except Exception as e:
+            logger.warning('Failed to download {}: {}'.format(url, e))
         finally:
             q.task_done()
 

@@ -1,14 +1,12 @@
 import unittest
-import mock
+from unittest import mock
 from sync_settings import sync_version as version
 
 
 class TestSyncVersion(unittest.TestCase):
-    @mock.patch('requests.get')
-    def test_get_remote_version_failed(self, get_mock):
-        response = mock.Mock()
-        response.status_code = 404
-        get_mock.return_value = response
+    @mock.patch('sync_settings.libs.gist.Gist.commits')
+    def test_get_remote_version_failed(self, commits_mock):
+        commits_mock.side_effect = Exception('Gist error')
         self.assertDictEqual({}, version.get_remote_version())
 
     @mock.patch('sync_settings.libs.gist.Gist.commits')

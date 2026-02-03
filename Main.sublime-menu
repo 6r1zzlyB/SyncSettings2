@@ -10,7 +10,7 @@
                 "id": "package-settings",
                 "children": [
                     {
-                        "caption": "Sync Settings",
+                        "caption": "Sync Settings 2",
                         "children": [
                             {
                                 "command": "edit_settings",
@@ -23,30 +23,30 @@
                                 "caption": "-"
                             },
                             {
-                                "caption": "Sync Settings: Create and Upload",
+                                "caption": "Sync Settings 2: Create and Upload",
                                 "command": "sync_settings_create_and_upload"
                             },
                             {
-                                "caption": "Sync Settings: Delete and Create",
+                                "caption": "Sync Settings 2: Delete and Create",
                                 "command": "sync_settings_delete_and_create"
                             },
                             {
-                                "caption": "Sync Settings: Download",
+                                "caption": "Sync Settings 2: Download",
                                 "command": "sync_settings_download"
                             },
                             {
-                                "caption": "Sync Settings: Upload",
+                                "caption": "Sync Settings 2: Upload",
                                 "command": "sync_settings_upload"
                             },
                             {
-                                "caption": "Sync Settings: Delete",
+                                "caption": "Sync Settings 2: Delete",
                                 "command": "sync_settings_delete_and_create",
                                 "args": {
                                     "create": false
                                 }
                             },
                             {
-                                "caption": "Sync Settings: Show Logs",
+                                "caption": "Sync Settings 2: Show Logs",
                                 "command": "sync_settings_open_logs"
                             }
                         ]
