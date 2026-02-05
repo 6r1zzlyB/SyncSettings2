@@ -24,7 +24,7 @@ def get_content(file):
             #  `UnicodeDecodeError: 'utf-8' codec can't decode byte 0x86 in position 23: invalid start byte`
             return fi.read().decode('utf-8', errors='ignore')
     except Exception as e:
-        logger.warning('file `{}` has errors'.format(file))
+        logger.warning(f'file `{file}` has errors')
         logger.exception(e)
     return ''
 
@@ -56,8 +56,11 @@ def should_include(file_name):
 def get_files():
     files_with_content = dict()
     user_path = path.join(sublime.packages_path(), 'User')
+    if not path.exists(user_path, folder=True):
+        raise FileNotFoundError(f'User package directory not found: {user_path}')
+
     for f in path.list_files(user_path):
-        encoded_path = path.encode(f.replace('{}{}'.format(user_path, path.separator()), ''))
+        encoded_path = path.encode(f.replace(f'{user_path}{path.separator()}', ''))
         if encoded_path in files_with_content:
             continue
         if should_exclude(f) and not should_include(f):
@@ -77,7 +80,7 @@ def download_file(q):
                 with open(name, 'wb') as f:
                     shutil.copyfileobj(r, f)
         except Exception as e:
-            logger.warning('Failed to download {}: {}'.format(url, e))
+            logger.warning(f'Failed to download {url}: {e}')
         finally:
             q.task_done()
 

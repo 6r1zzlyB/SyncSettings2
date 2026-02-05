@@ -45,10 +45,10 @@ class SyncSettingsCreateAndUploadCommand(sublime_plugin.WindowCommand):
             ).create(data)
             msg = (
                 'Sync Settings:\n\n'
-                'Your gist `{}` was created successfully\n\n'
+                f'Your gist `{g["id"]}` was created successfully\n\n'
                 'Do you want to overwrite the current `gist_id` property with the created gist?'
             )
-            answer = sublime.yes_no_cancel_dialog(msg.format(g['id']))
+            answer = sublime.yes_no_cancel_dialog(msg)
             if answer == sublime.DIALOG_NO:
                 sublime.set_clipboard(g['id'])
                 sublime.status_message('Sync Settings: the created gist`s id, has been copied to clipboard')
@@ -63,11 +63,12 @@ class SyncSettingsCreateAndUploadCommand(sublime_plugin.WindowCommand):
         except gist.NotFoundError as e:
             msg = (
                 'Sync Settings:\n\n'
+                f'{str(e)}\n\n'
                 'Apparently the token was not created with gist scope enabled.\n\n'
                 'Please, check your token or create a new one.\n\n'
                 'more info: https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/'
             )
-            sublime.message_dialog(msg.format(str(e)))
+            sublime.message_dialog(msg)
         except Exception as e:
             logger.exception(e)
-            sublime.message_dialog('Sync Settings:\n\n{}'.format(str(e)))
+            sublime.message_dialog(f'Sync Settings:\n\n{str(e)}')

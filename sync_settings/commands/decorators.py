@@ -15,9 +15,9 @@ def check_settings(*props):
                     prop_text = 'properties' if len(args) > 1 else 'property'
                     msg = (
                         'Sync Settings:\n\n'
-                        'The {} {}, must be defined. Edit your settings file.'
+                        f'The {prop_text} {" and ".join(props)}, must be defined. Edit your settings file.'
                     )
-                    sublime.message_dialog(msg.format(prop_text, ' and '.join(props)))
+                    sublime.message_dialog(msg)
                     sublime.active_window().run_command('open_file', {
                         'file': '${packages}/User/SyncSettings.sublime-settings'
                     })

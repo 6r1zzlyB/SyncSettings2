@@ -28,13 +28,13 @@ class ThreadProgress:
 
     def run(self, i):
         if not self.thread.is_alive():
-            msg = '' if not self.success_message else 'Sync Settings: {}'.format(self.success_message)
+            msg = '' if not self.success_message else f'Sync Settings: {self.success_message}'
             sublime.status_message(msg)
             return
         before = i % self.size
         after = (self.size - 1) - before
 
-        sublime.status_message('Sync Settings: {} [{}={}]'.format(self.message, ' ' * before, ' ' * after))
+        sublime.status_message(f'Sync Settings: {self.message} [{" " * before}={"{}" * after}]')
 
         if not after:
             self.addend = -1

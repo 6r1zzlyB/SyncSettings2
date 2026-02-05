@@ -55,7 +55,7 @@ def with_gid(func):
     @wraps(func)
     def with_gid_wrapper(self, *args, **kwargs):
         if not args[0]:
-            raise ValueError('The given id `{}` is not valid'.format(args[0]))
+            raise ValueError(f'The given id `{args[0]}` is not valid')
         return func(self, *args, **kwargs)
 
     return with_gid_wrapper
@@ -69,8 +69,8 @@ class Gist:
 
     @staticmethod
     def make_uri(endpoint=''):
-        e = '' if not endpoint else '/{}'.format(endpoint)
-        return 'https://api.github.com/gists{}'.format(e)
+        e = '' if not endpoint else f'/{endpoint}'
+        return f'https://api.github.com/gists{e}'
 
     @auth
     def create(self, data):
@@ -97,7 +97,7 @@ class Gist:
 
     @with_gid
     def commits(self, gid):
-        return self.__do_request('GET', self.make_uri('{}/commits'.format(gid))).json()
+        return self.__do_request('GET', self.make_uri(f'{gid}/commits')).json()
 
     def __do_request(self, verb, url, **kwargs):
         headers = self.headers
@@ -146,12 +146,12 @@ class Gist:
                     msg = response.json().get('message', str(e))
                 except Exception:
                     msg = str(e)
-                raise UnexpectedError('Unexpected Error, Reason: {}'.format(msg))
+                raise UnexpectedError(f'Unexpected Error, Reason: {msg}')
             return response
         except urllib.error.URLError as e:
-            raise NetworkError('Network error. Reason: {}'.format(str(e.reason)))
+            raise NetworkError(f'Network error. Reason: {str(e.reason)}')
         except Exception as e:
-            raise UnexpectedError('Unknown error: {}'.format(str(e)))
+            raise UnexpectedError(f'Unknown error: {str(e)}')
 
     @property
     def headers(self):
@@ -160,7 +160,10 @@ class Gist:
             'Content-Type': 'application/json'
         }
         if self.token:
-            h['Authorization'] = 'token {}'.format(self.token)
+            if self.token.startswith('ghp_') or self.token.startswith('github_pat_'):
+                h['Authorization'] = f'Bearer {self.token}'
+            else:
+                h['Authorization'] = f'token {self.token}'
         return h
 
     @property

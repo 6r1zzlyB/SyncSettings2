@@ -30,14 +30,14 @@ class SyncSettingsDeleteAndCreateCommand(sublime_plugin.WindowCommand):
         except gist.NotFoundError as e:
             msg = (
                 'Sync Settings:\n\n'
-                '{}\n\n'
+                f'{str(e)}\n\n'
                 'Please check if the access token was created with the gist scope.\n\n'
                 'If the access token is correct, please, delete the value of `gist_id` property manually.'
             )
-            sublime.message_dialog(msg.format(str(e)))
+            sublime.message_dialog(msg)
         except Exception as e:
             logger.exception(e)
-            sublime.message_dialog('Sync Settings:\n\n{}'.format(str(e)))
+            sublime.message_dialog(f'Sync Settings:\n\n{str(e)}')
 
     @check_settings('gist_id', 'access_token')
     def run(self, create=True):
@@ -50,6 +50,6 @@ class SyncSettingsDeleteAndCreateCommand(sublime_plugin.WindowCommand):
             gid = settings.get('gist_id')
             ThreadProgress(
                 target=lambda: self.delete_and_create(should_create=create),
-                message='deleting gist `{}`'.format(gid),
+                message=f'deleting gist `{gid}`',
                 success_message='gist deleted'
             )

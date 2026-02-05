@@ -65,7 +65,7 @@ class SyncSettingsDownloadCommand(sublime_plugin.WindowCommand):
             sublime.set_timeout(lambda: self.check_installation(diff, on_done=lambda: self.on_done(g)), 100)
         except Exception as e:
             logger.exception(e)
-            sublime.message_dialog('Sync Settings:\n\n{}'.format(str(e)))
+            sublime.message_dialog(f'Sync Settings:\n\n{str(e)}')
 
     @decorators.check_settings('gist_id')
     def run(self):

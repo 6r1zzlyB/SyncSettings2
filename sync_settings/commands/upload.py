@@ -33,16 +33,18 @@ class SyncSettingsUploadCommand(sublime_plugin.WindowCommand):
                 'created_at': commit['committed_at'],
             })
         except gist.NotFoundError as e:
+        except gist.NotFoundError as e:
             msg = (
                 'Sync Settings:\n\n'
-                '{}\n\n'
+                f'{str(e)}\n\n'
                 'Please check if the access token was created with the gist scope.\n\n'
                 'If the access token is correct, please, delete the value of `gist_id` property manually.'
             )
-            sublime.message_dialog(msg.format(str(e)))
+            sublime.message_dialog(msg)
         except Exception as e:
             logger.exception(e)
-            sublime.message_dialog('Sync Settings:\n\n{}'.format(str(e)))
+            sublime.message_dialog(f'Sync Settings:\n\n{str(e)}')
+            raise
 
     @decorators.check_settings('gist_id', 'access_token')
     def run(self):
